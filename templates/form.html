@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Workout</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+    <h1>Workout Logger</h1>
+
+    <div class="card">
+
+        <form action="/log" method="POST">
+
+            <label for="exercise">Exercise:</label>
+            <input type="text" id="exercise" name="exercise" required>
+
+            <label for="sets">Sets:</label>
+            <input type="number" id="sets" name="sets" min="1" required>
+
+            <label for="reps">Reps:</label>
+            <input type="number" id="reps" name="reps" min="1" required>
+
+            <label for="weight">Weight (kg):</label>
+            <input type="number" id="weight" name="weight" min="0" step="any" required>
+
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" required>
+
+            <label for="day_type">Day Type:</label>
+            <select id="day_type" name="day_type" required>
+                <option value="" disabled selected>Select day type</option>
+                <option value="Push">Push</option>
+                <option value="Pull">Pull</option>
+                <option value="Legs">Legs</option>
+            </select>
+
+            <button type="submit">Log Workout</button>
+        </form>
+    </div>
+</body>
+
+</html>
