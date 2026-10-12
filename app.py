@@ -28,7 +28,22 @@ def log_workout():
     conn.commit()
     conn.close()
 
-    return redirect(url_for('index'))
+    return redirect(url_for('history'))
+
+
+@app.route('/history')
+def history():
+
+    conn = sqlite3.connect('gym_log.db')
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT id, exercise, sets, reps, weight, date, day_type FROM workouts ORDER BY date DESC, id DESC")
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    return render_template('history.html', rows=rows)
 
 
 if __name__ == '__main__':
