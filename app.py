@@ -70,7 +70,6 @@ def log_workout():
         errors.append("Weight must be a valid number.")
 
     # Date validation
-        # Date validation
     date = ''
     try:
         parsed_date = datetime.strptime(
