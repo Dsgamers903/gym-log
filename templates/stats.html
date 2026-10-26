@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <h1>Workout Statistics</h1>
+
+    <form method="GET">
+        <label for="exercise">Exercise:</label>
+        <select id="exercise" name="exercise">
+            {% for name in exercises %}
+            <option value="{{ name }}" {% if name==selected %}selected{% endif %}>{{ name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Show Progress</button>
+    </form>
+
+    <h2>Progress</h2>
+    {% if chart_data %}
+    <img src="data:image/png;base64,{{ chart_data }}" alt="Weight progression chart for {{ selected }}">
+    {% else %}
+    <p>No data yet.</p>
+    {% endif %}
+
+    <h2>1. Volume per Exercise</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Exercise</th>
+                <th>Total Volume (kg)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in volume_rows %}
+            <tr>
+                <td>{{ row[0] }}</td>
+                <td>{{ row[1] }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="2">No workout data available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>2. Heaviest Weight per Exercise</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Exercise</th>
+                <th>Heaviest Weight (kg)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in heaviest_rows %}
+            <tr>
+                <td>{{ row[0] }}</td>
+                <td>{{ row[1] }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="2">No workout data available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>3. Sessions per Day Type</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Day Type</th>
+                <th>Sessions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in session_rows %}
+            <tr>
+                <td>{{ row[0] }}</td>
+                <td>{{ row[1] }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="2">No workout data available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('index') }}">Log a Workout</a>
+    <a href="{{ url_for('history') }}">Workout History</a>
+</body>
+
+</html>

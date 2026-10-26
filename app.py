@@ -1,8 +1,12 @@
 
 from datetime import datetime, date as Date
+import base64
+import io
 import sqlite3
 import math
 from flask import Flask, render_template, request, redirect, url_for
+import matplotlib.dates as mdates
+from matplotlib.figure import Figure
 
 app = Flask(__name__)
 
@@ -12,6 +16,27 @@ MAX_REPS = 1000
 MAX_WEIGHT = 1000.0
 MAX_EXERCISE_LENGTH = 100
 MIN_WORKOUT_DATE = Date(1900, 1, 1)
+
+
+def build_progress_chart(points, exercise):
+    dates = [Date.fromisoformat(point[0]) for point in points]
+    weights = [point[1] for point in points]
+
+    fig = Figure()
+    ax = fig.subplots()
+    ax.plot(dates, weights, marker='o')
+
+    ax.set_title(f'Progress for {exercise}')
+    ax.set_xlabel('Date')
+    ax.set_ylabel('Weight (kg)')
+    ax.set_xticks(dates)
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
+    fig.autofmt_xdate()
+
+    buf = io.BytesIO()
+    fig.savefig(buf, format='png')
+
+    return base64.b64encode(buf.getvalue()).decode('ascii')
 
 
 @app.route('/')
@@ -24,7 +49,8 @@ def log_workout():
     errors = []
 
     # Exercise validation
-    exercise = request.form.get('exercise', '').strip()
+    exercise = request.form.get('exercise', '').strip().title()
+    exercise = ' '.join(exercise.split())
 
     if not exercise:
         errors.append("Exercise name cannot be empty.")
@@ -140,6 +166,91 @@ def history():
         conn.close()
 
     return render_template('history.html', rows=rows)
+
+
+@app.route('/stats')
+def stats():
+    conn = sqlite3.connect('gym_log.db')
+
+    try:
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            SELECT exercise,
+                   SUM(sets * reps * weight) AS total_volume
+            FROM workouts
+            GROUP BY exercise
+            ORDER BY total_volume DESC
+            """
+        )
+        volume_rows = cursor.fetchall()
+
+        cursor.execute(
+            """
+            SELECT exercise,
+                   MAX(weight) AS heaviest_weight
+            FROM workouts
+            GROUP BY exercise
+            ORDER BY heaviest_weight DESC
+            """
+        )
+        heaviest_rows = cursor.fetchall()
+
+        cursor.execute(
+            """
+            SELECT day_type,
+                   COUNT(DISTINCT date) AS sessions
+            FROM workouts
+            GROUP BY day_type
+            ORDER BY sessions DESC
+            """
+        )
+        session_rows = cursor.fetchall()
+
+        cursor.execute(
+            """
+            SELECT DISTINCT exercise
+            FROM workouts
+            ORDER BY exercise
+            """
+        )
+        exercises = [row[0] for row in cursor.fetchall()]
+
+        selected = request.args.get('exercise')
+
+        if selected not in exercises:
+            selected = exercises[0] if exercises else None
+
+        if selected is not None:
+            cursor.execute(
+                """
+                SELECT date, MAX(weight)
+                FROM workouts
+                WHERE exercise = ?
+                GROUP BY date
+                ORDER BY date
+                """,
+                (selected,)
+            )
+            points = cursor.fetchall()
+        else:
+            points = []
+
+    finally:
+        conn.close()
+
+    chart_data = build_progress_chart(points, selected) if points else None
+
+    return render_template(
+        'stats.html',
+        volume_rows=volume_rows,
+        heaviest_rows=heaviest_rows,
+        session_rows=session_rows,
+        exercises=exercises,
+        selected=selected,
+        chart_data=chart_data
+    )
 
 
 if __name__ == '__main__':
