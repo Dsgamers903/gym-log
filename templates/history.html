@@ -1,20 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workout History</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+{% block title %}Workout History{% endblock %}
 
-</head>
+{% block content %}
+<h1>Workout History</h1>
 
-<body>
-    <h1>Workout History</h1>
-
+<div class="card card-wide">
     <div class="table">
         <table>
             <thead>
@@ -44,10 +35,5 @@
             </tbody>
         </table>
     </div>
-
-    <a href="{{ url_for('stats') }}">Workout Statistics</a>
-    <a href="{{ url_for('index') }}">Log a Workout</a>
-
-</body>
-
-</html>
+</div>
+{% endblock %}

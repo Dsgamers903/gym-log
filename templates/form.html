@@ -1,70 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Log Workout</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+{% block title %}Log Workout{% endblock %}
 
-</head>
+{% block content %}
+<h1>Workout Logger</h1>
 
-<body>
-    <h1>Workout Logger</h1>
-
-    <div class="card">
-        {% if errors %}
-        <div class="error">
-            <ul>
-                {% for e in errors %}
-                <li>{{ e }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-        {% endif %}
-
-        <form action="/log" method="POST">
-
-            <label for="exercise">Exercise:</label>
-            <input type="text" id="exercise" name="exercise" value="{{ form.get('exercise', '') }}" required>
-
-            <label for="sets">Sets:</label>
-            <input type="number" id="sets" name="sets" min="1" value="{{ form.get('sets', '') }}" required>
-
-            <label for="reps">Reps:</label>
-            <input type="number" id="reps" name="reps" min="1" value="{{ form.get('reps', '') }}" required>
-
-            <label for="weight">Weight (kg):</label>
-            <input type="number" id="weight" name="weight" min="0" step="any" value="{{ form.get('weight', '') }}"
-                required>
-
-            <label for="date">Date:</label>
-            <input type="date" id="date" name="date" value="{{ form.get('date', '') }}" required>
-
-
-            <label for="day_type">Day Type:</label>
-
-            <select id="day_type" name="day_type" required>
-                <option value="" disabled {% if form.get('day_type') not in ['Push', 'Pull' , 'Legs' ] %}selected{%
-                    endif %}>Select day type</option>
-
-                <option value="Push" {% if form.get('day_type')=='Push' %}selected{% endif %}>Push</option>
-
-                <option value="Pull" {% if form.get('day_type')=='Pull' %}selected{% endif %}>Pull</option>
-
-                <option value="Legs" {% if form.get('day_type')=='Legs' %}selected{% endif %}>Legs</option>
-            </select>
-
-
-            <button type="submit">Log Workout</button>
-        </form>
+<div class="card">
+    {% if errors %}
+    <div class="error">
+        <ul>
+            {% for e in errors %}
+            <li>{{ e }}</li>
+            {% endfor %}
+        </ul>
     </div>
+    {% endif %}
 
-    <a href="{{ url_for('stats') }}">Workout Statistics</a>
-    <a href="{{ url_for('history') }}">Workout History</a>
-</body>
+    <form action="/log" method="POST">
 
-</html>
+        <label for="exercise">Exercise:</label>
+        <input type="text" id="exercise" name="exercise" value="{{ form.get('exercise', '') }}" required>
+
+        <label for="sets">Sets:</label>
+        <input type="number" id="sets" name="sets" min="1" value="{{ form.get('sets', '') }}" required>
+
+        <label for="reps">Reps:</label>
+        <input type="number" id="reps" name="reps" min="1" value="{{ form.get('reps', '') }}" required>
+
+        <label for="weight">Weight (kg):</label>
+        <input type="number" id="weight" name="weight" min="0" step="any" value="{{ form.get('weight', '') }}" required>
+
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" value="{{ form.get('date', '') }}" required>
+
+
+        <label for="day_type">Day Type:</label>
+
+        <select id="day_type" name="day_type" required>
+            <option value="" disabled {% if form.get('day_type') not in ['Push', 'Pull' , 'Legs' ] %}selected{% endif
+                %}>Select day type</option>
+
+            <option value="Push" {% if form.get('day_type')=='Push' %}selected{% endif %}>Push</option>
+
+            <option value="Pull" {% if form.get('day_type')=='Pull' %}selected{% endif %}>Pull</option>
+
+            <option value="Legs" {% if form.get('day_type')=='Legs' %}selected{% endif %}>Legs</option>
+        </select>
+
+
+        <button type="submit">Log Workout</button>
+    </form>
+</div>
+{% endblock %}

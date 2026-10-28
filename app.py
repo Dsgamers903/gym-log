@@ -24,17 +24,23 @@ def build_progress_chart(points, exercise):
 
     fig = Figure()
     ax = fig.subplots()
-    ax.plot(dates, weights, marker='o')
+    ax.plot(dates, weights, marker='o', color='#4cc9f0')
 
     ax.set_title(f'Progress for {exercise}')
     ax.set_xlabel('Date')
     ax.set_ylabel('Weight (kg)')
     ax.set_xticks(dates)
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%d %b'))
+    ax.title.set_color('#e6e6e6')
+    ax.xaxis.label.set_color('#e6e6e6')
+    ax.yaxis.label.set_color('#e6e6e6')
+    ax.tick_params(colors='#e6e6e6')
+    for spine in ax.spines.values():
+        spine.set_color('#e6e6e6')
     fig.autofmt_xdate()
 
     buf = io.BytesIO()
-    fig.savefig(buf, format='png')
+    fig.savefig(buf, format='png', transparent=True)
 
     return base64.b64encode(buf.getvalue()).decode('ascii')
 
